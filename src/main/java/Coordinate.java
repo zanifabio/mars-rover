@@ -1,12 +1,15 @@
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
-
 @Getter
-@Setter
-@AllArgsConstructor
-public class Coordinate {
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@EqualsAndHashCode
+public final class Coordinate {
+    private final int x;
+    private final int y;
 
-    private int x;
-    private int y;
+    public static Coordinate of(int x, int y) {
+        return new Coordinate(x, y);
+    }
 }

@@ -1,69 +1,61 @@
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
-@NoArgsConstructor
 public class Planet {
 
-    private Point[][] planetMap;
+    private final int width;
+    private final int height;
+    private final HashSet<Coordinate> obstacles;
 
-    private Planet(Point[][] planetMap) {
-        this.planetMap = planetMap;
+    private Planet(final int width, final int height) {
+        this.width = width;
+        this.height = height;
+        this.obstacles = new HashSet<>();
     }
 
     public static Planet newInstance(int width, int height) {
         if (width < 1 || height < 1) {
             throw new IllegalArgumentException("We are modelling Mars, not a black hole");
         }
-        Point[][] planetMap = new Point[height][width];
-        return new Planet(planetMap);
+        return new Planet(width, height);
     }
 
-    public int getHeight() {
-        return planetMap.length;
-    }
-
-    public int getWidth() {
-        return planetMap[0].length;
+    public boolean isOutOfBounds(final int x, final int y) {
+        boolean xOutOfBounds = x < 0 || x >= getWidth();
+        boolean yOutOfBounds = y < 0 || y >= getHeight();
+        return xOutOfBounds || yOutOfBounds;
     }
 
     public void placeObstacle(int x, int y) {
         if (isOutOfBounds(x, y)) {
             throw new IllegalArgumentException("Sorry, cannot place obstacles outside this planet");
         }
-        planetMap[y][x].setHasObstacle(true);
+        obstacles.add(Coordinate.of(x, y));
     }
 
     public void clearObstacle(int x, int y) {
         if (isOutOfBounds(x, y)) {
             throw new IllegalArgumentException("Sorry, cannot remove obstacles outside this planet");
         }
-        planetMap[y][x].setHasObstacle(false);
+        obstacles.remove(Coordinate.of(x, y));
     }
 
-    private boolean isOutOfBounds(final int x, final int y) {
-        boolean xOutOfBounds = x < 0 || x >= getWidth();
-        boolean yOutOfBounds = y < 0 || y >= getHeight();
-        return xOutOfBounds || yOutOfBounds;
-    }
-
-    public void placeObstacles(List<Coordinate> coordinates) {
+    public void placeObstacles(Set<Coordinate> coordinates) {
         for (Coordinate coordinate : coordinates) {
             placeObstacle(coordinate.getX(), coordinate.getY());
         }
     }
 
-    public void clearObstacles(List<Coordinate> coordinates) {
+    public void clearObstacles(Set<Coordinate> coordinates) {
         for (Coordinate coordinate : coordinates) {
             clearObstacle(coordinate.getX(), coordinate.getY());
         }
     }
 
     public void clearObstacles() {
-        planetMap = new Point[getHeight()][getWidth()];
+        this.obstacles.clear();
     }
 }
