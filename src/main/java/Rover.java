@@ -11,7 +11,7 @@ public class Rover {
     private Direction facingDirection;
 
     // create instance and check it's not on obstacle
-    public Rover newInstance(Planet planet, Coordinate initialPosition, Direction initialFacingDirection) {
+    public static Rover newInstance(Planet planet, Coordinate initialPosition, Direction initialFacingDirection) {
         if (planet.isOutOfBounds(initialPosition.getX(), initialPosition.getY())) {
             throw new IllegalArgumentException("It's a land rover. It must be placed on the planet.");
         }
@@ -21,9 +21,9 @@ public class Rover {
         return new Rover(planet, initialPosition, initialFacingDirection);
     }
 
-    public void move(Movement movement) {
+    public void move(Action action) {
         int step = 0;
-        switch (movement) {
+        switch (action) {
             case LEFT:
                 facingDirection = Direction.left(facingDirection);
                 return;
@@ -76,7 +76,7 @@ public class Rover {
             }
         }
         if (planet.getObstacles().contains(nextPosition)) {
-            throw new IllegalStateException("The rover encountered an obstacle, the command sequence was aborted");
+            throw new IllegalStateException("The rover encountered an obstacle");
         } else {
             currentPosition = nextPosition;
         }
@@ -86,7 +86,6 @@ public class Rover {
     // move sequence method
 
     //todo: make helper classes in different package and main class to make the application work
-    //todo: write unit tests
 }
 
 enum Axis {X, Y}
