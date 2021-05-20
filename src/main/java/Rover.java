@@ -52,10 +52,10 @@ public class Rover {
                 step *= -1;
                 axis = Axis.X;
         }
-        nextPosition(step, axis);
+        nextPosition(action, step, axis);
     }
 
-    private void nextPosition(final int step, final Axis axis) {
+    private void nextPosition(Action action, final int step, final Axis axis) {
         Coordinate nextPosition;
         if (axis.equals(Axis.X)) {
             if (currentPosition.getX() + step >= planet.getWidth()) {
@@ -76,16 +76,33 @@ public class Rover {
             }
         }
         if (planet.getObstacles().contains(nextPosition)) {
-            throw new IllegalStateException("The rover encountered an obstacle");
+            throw new ObstacleEncounteredException(this, nextPosition, action);
         } else {
             currentPosition = nextPosition;
         }
     }
 
+    public void move(char[] sequence) {
+        try {
+            for (char command : sequence) {
+                Action action = Action.get(String.valueOf(command).toUpperCase());
+                move(action);
+            }
+        } catch (ObstacleEncounteredException e) {
+            String message = String.format("The rover encountered an obstacle at %s." +
+                    "\nIt stopped at %s, facing %s and cannot go %s. Command sequence aborted.",
+                    e.getObstacle(), e.getRoverPosition(), e.getRoverFacingDirection(), e.getGivenCommand());
+            throw new IllegalStateException(message, e);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("One or more commands were not valid. Command sequence aborted.");
+        }
+    }
 
-    // move sequence method
+    public void move(String sequence) {
+        move(sequence.toCharArray());
+    }
 
-    //todo: make helper classes in different package and main class to make the application work
+    //todo: make helper classes in different package and main class to make the application runnable
 }
 
 enum Axis {X, Y}
