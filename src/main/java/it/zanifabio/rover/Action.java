@@ -1,9 +1,14 @@
+package it.zanifabio.rover;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * Enum indicating the possible actions the rover can perform
+ */
 @Getter
 @AllArgsConstructor
 public enum Action {
@@ -23,6 +28,11 @@ public enum Action {
         }
     }
 
+    /**
+     * Method to get the enum from the corresponding short string representation
+     * @param shortName Short name of the action (F,B,L,R)
+     * @return The corresponding it.zanifabio.rover.Action enum
+     */
     public static Action get(String shortName) {
         if (lookup.get(shortName) == null) {
             throw new IllegalArgumentException("Command not found");

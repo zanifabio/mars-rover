@@ -1,5 +1,12 @@
+package it.zanifabio.rover;
+
 import lombok.Getter;
 
+/**
+ * Exception indicating the rover encountered an obstacle.
+ * This exception indicates where the obstacle is, the position of the rover,
+ * it's facing direction and the action it tried to perform
+ */
 @Getter
 public class ObstacleEncounteredException extends IllegalArgumentException {
     private final Coordinate obstacle;

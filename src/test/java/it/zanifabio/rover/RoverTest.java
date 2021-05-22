@@ -1,3 +1,5 @@
+package it.zanifabio.rover;
+
 import java.util.Set;
 
 import org.junit.jupiter.api.Assertions;
@@ -18,9 +20,9 @@ public class RoverTest {
                 () -> Rover.newInstance(planet, Coordinate.of(10, 10), Direction.NORTH));
         assert exception.getMessage().contains("rover on an obstacle");
         Rover rover = Rover.newInstance(planet, Coordinate.of(15, 10), Direction.NORTH);
-        assert rover.getPlanet().equals(planet);
-        assert rover.getCurrentPosition().equals(Coordinate.of(15, 10));
-        assert rover.getFacingDirection().equals(Direction.NORTH);
+        Assertions.assertEquals(rover.getPlanet(), planet);
+        Assertions.assertEquals(rover.getCurrentPosition(), (Coordinate.of(15, 10)));
+        Assertions.assertEquals(rover.getFacingDirection(), (Direction.NORTH));
     }
 
     @BeforeEach
@@ -34,21 +36,21 @@ public class RoverTest {
         Direction initialDirection = Direction.NORTH;
         Rover rover = Rover.newInstance(planet, initialPosition, initialDirection);
         rover.move(Action.RIGHT);
-        assert rover.getFacingDirection().equals(Direction.EAST);
+        Assertions.assertEquals(rover.getFacingDirection(), Direction.EAST);
         rover.move(Action.RIGHT);
-        assert rover.getFacingDirection().equals(Direction.SOUTH);
+        Assertions.assertEquals(rover.getFacingDirection(), Direction.SOUTH);
         rover.move(Action.RIGHT);
-        assert rover.getFacingDirection().equals(Direction.WEST);
+        Assertions.assertEquals(rover.getFacingDirection(), Direction.WEST);
         rover.move(Action.RIGHT);
-        assert rover.getFacingDirection().equals(Direction.NORTH);
+        Assertions.assertEquals(rover.getFacingDirection(), Direction.NORTH);
         rover.move(Action.LEFT);
-        assert rover.getFacingDirection().equals(Direction.WEST);
+        Assertions.assertEquals(rover.getFacingDirection(), Direction.WEST);
         rover.move(Action.LEFT);
-        assert rover.getFacingDirection().equals(Direction.SOUTH);
+        Assertions.assertEquals(rover.getFacingDirection(), Direction.SOUTH);
         rover.move(Action.LEFT);
-        assert rover.getFacingDirection().equals(Direction.EAST);
+        Assertions.assertEquals(rover.getFacingDirection(), Direction.EAST);
         rover.move(Action.LEFT);
-        assert rover.getFacingDirection().equals(Direction.NORTH);
+        Assertions.assertEquals(rover.getFacingDirection(), Direction.NORTH);
     }
 
     @Test
@@ -57,15 +59,15 @@ public class RoverTest {
         Direction initialDirection = Direction.NORTH;
         Rover rover = Rover.newInstance(planet, initialPosition, initialDirection);
         rover.move(Action.FORWARD);
-        assert rover.getCurrentPosition().equals(Coordinate.of(10, 9));
+        Assertions.assertEquals(rover.getCurrentPosition(), Coordinate.of(10, 9));
         rover.move(Action.BACKWARDS);
-        assert rover.getCurrentPosition().equals(Coordinate.of(10, 10));
+        Assertions.assertEquals(rover.getCurrentPosition(), Coordinate.of(10, 10));
         rover.move(Action.RIGHT);
-        assert rover.getFacingDirection().equals(Direction.EAST);
+        Assertions.assertEquals(rover.getFacingDirection(), Direction.EAST);
         rover.move(Action.FORWARD);
-        assert rover.getCurrentPosition().equals(Coordinate.of(11, 10));
+        Assertions.assertEquals(rover.getCurrentPosition(), Coordinate.of(11, 10));
         rover.move(Action.BACKWARDS);
-        assert rover.getCurrentPosition().equals(Coordinate.of(10, 10));
+        Assertions.assertEquals(rover.getCurrentPosition(), Coordinate.of(10, 10));
     }
 
     @Test
@@ -75,34 +77,34 @@ public class RoverTest {
         Direction initialDirection = Direction.EAST;
         Rover rover = Rover.newInstance(planet, initialPosition, initialDirection);
         rover.move(Action.FORWARD);
-        assert rover.getCurrentPosition().equals(Coordinate.of(0, 10));
+        Assertions.assertEquals(rover.getCurrentPosition(), Coordinate.of(0, 10));
         rover.move(Action.BACKWARDS);
-        assert rover.getCurrentPosition().equals(Coordinate.of(19, 10));
+        Assertions.assertEquals(rover.getCurrentPosition(), Coordinate.of(19, 10));
         rover.move(Action.LEFT);
         rover.move(Action.LEFT);
-        assert rover.getFacingDirection().equals(Direction.WEST);
-        assert rover.getCurrentPosition().equals(Coordinate.of(19, 10));
+        Assertions.assertEquals(rover.getFacingDirection(), Direction.WEST);
+        Assertions.assertEquals(rover.getCurrentPosition(), Coordinate.of(19, 10));
         rover.move(Action.BACKWARDS);
-        assert rover.getCurrentPosition().equals(Coordinate.of(0, 10));
+        Assertions.assertEquals(rover.getCurrentPosition(), Coordinate.of(0, 10));
         rover.move(Action.FORWARD);
-        assert rover.getCurrentPosition().equals(Coordinate.of(19, 10));
+        Assertions.assertEquals(rover.getCurrentPosition(), Coordinate.of(19, 10));
 
         // Edge on Y axis
         initialPosition = Coordinate.of(10, 0);
         initialDirection = Direction.NORTH;
         rover = Rover.newInstance(planet, initialPosition, initialDirection);
         rover.move(Action.FORWARD);
-        assert rover.getCurrentPosition().equals(Coordinate.of(10, 14));
+        Assertions.assertEquals(rover.getCurrentPosition(), Coordinate.of(10, 14));
         rover.move(Action.BACKWARDS);
-        assert rover.getCurrentPosition().equals(Coordinate.of(10, 0));
+        Assertions.assertEquals(rover.getCurrentPosition(), Coordinate.of(10, 0));
         rover.move(Action.LEFT);
         rover.move(Action.LEFT);
-        assert rover.getFacingDirection().equals(Direction.SOUTH);
-        assert rover.getCurrentPosition().equals(Coordinate.of(10, 0));
+        Assertions.assertEquals(rover.getFacingDirection(), Direction.SOUTH);
+        Assertions.assertEquals(rover.getCurrentPosition(), Coordinate.of(10, 0));
         rover.move(Action.BACKWARDS);
-        assert rover.getCurrentPosition().equals(Coordinate.of(10, 14));
+        Assertions.assertEquals(rover.getCurrentPosition(), Coordinate.of(10, 14));
         rover.move(Action.FORWARD);
-        assert rover.getCurrentPosition().equals(Coordinate.of(10, 0));
+        Assertions.assertEquals(rover.getCurrentPosition(), Coordinate.of(10, 0));
     }
 
     @Test
@@ -115,17 +117,35 @@ public class RoverTest {
         Coordinate initialPosition = Coordinate.of(10, 10);
         Direction initialDirection = Direction.SOUTH;
         Rover rover = Rover.newInstance(planet, initialPosition, initialDirection);
-        Exception exception = Assertions.assertThrows(ObstacleEncounteredException.class, () -> rover.move(Action.FORWARD));
-//        assert exception.getMessage().equals("The rover encountered an obstacle");
+
+        ObstacleEncounteredException exception = Assertions.assertThrows(ObstacleEncounteredException.class,
+                () -> rover.move(Action.FORWARD));
+        Assertions.assertEquals(exception.getObstacle(), obstacle2);
+        Assertions.assertEquals(exception.getRoverPosition(), initialPosition);
+        Assertions.assertEquals(exception.getRoverFacingDirection(), Direction.SOUTH);
+        Assertions.assertEquals(exception.getGivenCommand(), Action.FORWARD);
+
         rover.move(Action.LEFT);
         exception = Assertions.assertThrows(ObstacleEncounteredException.class, () -> rover.move(Action.FORWARD));
-//        assert exception.getMessage().equals("The rover encountered an obstacle");
+        Assertions.assertEquals(exception.getObstacle(), obstacle1);
+        Assertions.assertEquals(exception.getRoverPosition(), initialPosition);
+        Assertions.assertEquals(exception.getRoverFacingDirection(), Direction.EAST);
+        Assertions.assertEquals(exception.getGivenCommand(), Action.FORWARD);
+
         rover.move(Action.LEFT);
         exception = Assertions.assertThrows(ObstacleEncounteredException.class, () -> rover.move(Action.BACKWARDS));
-//        assert exception.getMessage().equals("The rover encountered an obstacle");
+        Assertions.assertEquals(exception.getObstacle(), obstacle2);
+        Assertions.assertEquals(exception.getRoverPosition(), initialPosition);
+        Assertions.assertEquals(exception.getRoverFacingDirection(), Direction.NORTH);
+        Assertions.assertEquals(exception.getGivenCommand(), Action.BACKWARDS);
+
         rover.move(Action.LEFT);
         exception = Assertions.assertThrows(ObstacleEncounteredException.class, () -> rover.move(Action.BACKWARDS));
-//        assert exception.getMessage().equals("The rover encountered an obstacle");
+        Assertions.assertEquals(exception.getObstacle(), obstacle1);
+        Assertions.assertEquals(exception.getRoverPosition(), initialPosition);
+        Assertions.assertEquals(exception.getRoverFacingDirection(), Direction.WEST);
+        Assertions.assertEquals(exception.getGivenCommand(), Action.BACKWARDS);
+
     }
 
     @Test
@@ -136,8 +156,8 @@ public class RoverTest {
 
         char[] sequence = {'l', 'F', 'f', 'R', 'f', 'r', 'b', 'B'};
         rover.move(sequence);
-        assert rover.getCurrentPosition().equals(Coordinate.of(6, 9));
-        assert rover.getFacingDirection().equals(Direction.EAST);
+        Assertions.assertEquals(rover.getCurrentPosition(), Coordinate.of(6, 9));
+        Assertions.assertEquals(rover.getFacingDirection(), Direction.EAST);
     }
 
     @Test
@@ -148,8 +168,8 @@ public class RoverTest {
 
         String sequence = "LFFRFRBB";
         rover.move(sequence);
-        assert rover.getCurrentPosition().equals(Coordinate.of(6, 9));
-        assert rover.getFacingDirection().equals(Direction.EAST);
+        Assertions.assertEquals(rover.getCurrentPosition(), Coordinate.of(6, 9));
+        Assertions.assertEquals(rover.getFacingDirection(), Direction.EAST);
     }
 
     @Test
@@ -171,8 +191,13 @@ public class RoverTest {
         Rover rover = Rover.newInstance(planet, initialPosition, initialDirection);
         String sequence = "LFFRFRBB";
         Exception exception = Assertions.assertThrows(IllegalStateException.class, () -> rover.move(sequence));
-        assert rover.getCurrentPosition().equals(Coordinate.of(8, 10));
-        assert rover.getFacingDirection().equals(Direction.NORTH);
+
+        Assertions.assertEquals(rover.getCurrentPosition(), Coordinate.of(8, 10));
+        Assertions.assertEquals(rover.getFacingDirection(), Direction.NORTH);
+        String expectedErrorMessage = String.format("The rover encountered an obstacle at %s." +
+                        "\nIt stopped at %s, facing %s and cannot go %s. Command sequence aborted.",
+                Coordinate.of(8, 9), Coordinate.of(8, 10), Direction.NORTH, Action.FORWARD);
+        Assertions.assertEquals(expectedErrorMessage, exception.getMessage());
         System.err.println(exception.getMessage());
     }
 }

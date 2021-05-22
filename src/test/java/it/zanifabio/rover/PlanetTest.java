@@ -1,3 +1,5 @@
+package it.zanifabio.rover;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,7 +45,7 @@ public class PlanetTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> planet.placeObstacle(-1, 20));
         planet.placeObstacle(7,12);
         Assertions.assertTrue(planet.getObstacles().contains(Coordinate.of(7,12)));
-        planet.clearObstacle(7,12);
+        planet.removeObstacle(7,12);
         Assertions.assertFalse(planet.getObstacles().contains(Coordinate.of(7,12)));
     }
 
@@ -61,12 +63,12 @@ public class PlanetTest {
         Assertions.assertTrue(planet.getObstacles().contains(c2));
         Assertions.assertTrue(planet.getObstacles().contains(c3));
 
-        planet.clearObstacles(Set.of(c1, c3));
+        planet.removeObstacles(Set.of(c1, c3));
         Assertions.assertFalse(planet.getObstacles().contains(c1));
         Assertions.assertTrue(planet.getObstacles().contains(c2));
         Assertions.assertFalse(planet.getObstacles().contains(c3));
 
-        planet.clearObstacles();
+        planet.removeObstacles();
         Assertions.assertFalse(planet.getObstacles().contains(c2));
 
     }

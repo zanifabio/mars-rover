@@ -1,7 +1,13 @@
+package it.zanifabio.rover;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+
+/**
+ * Point coordinate (x, y) on the planet.
+ */
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode

@@ -1,7 +1,13 @@
+package it.zanifabio.rover;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * Class representing a specific rover on a planet and how to move it around.
+ * The rover can have a unique planet and in each moment has a given position on the planet and a given facing direction.
+ */
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Rover {
@@ -10,7 +16,16 @@ public class Rover {
     private Coordinate currentPosition;
     private Direction facingDirection;
 
-    // create instance and check it's not on obstacle
+
+    /**
+     * Static factory method to generate a new instance of a rover.
+     * The rover must be placed inside the boundaries of the planet and not on any obstacle.
+     * @param planet it.zanifabio.rover.Planet where the rover operates.
+     * @param initialPosition Initial position of the rover on the planet. Must be inside the planet and not on obstacles.
+     * @param initialFacingDirection Initial direction the rover is facing (N,E,S,W).
+     * @return A new instance of the rover.
+     * @throws IllegalArgumentException If the rover initial position is outside the planet or on an obstacle.
+     */
     public static Rover newInstance(Planet planet, Coordinate initialPosition, Direction initialFacingDirection) {
         if (planet.isOutOfBounds(initialPosition.getX(), initialPosition.getY())) {
             throw new IllegalArgumentException("It's a land rover. It must be placed on the planet.");
@@ -21,8 +36,15 @@ public class Rover {
         return new Rover(planet, initialPosition, initialFacingDirection);
     }
 
+    /**
+     * Method to move the rover on the planet given an action to perform.
+     * @param action The action the rover must perform. It has to be one of: FORWARD, BACKWARDS, LEFT, RIGHT
+     * @throws ObstacleEncounteredException Exception indicating an obstacle was encountered, its position and the status of the rover.
+     */
     public void move(Action action) {
         int step = 0;
+        // Check the action, if it is a turn just change the direction,
+        // otherwise set a positive or negative move depending on FORWARD or BACKWARDS action
         switch (action) {
             case LEFT:
                 facingDirection = Direction.left(facingDirection);
@@ -36,6 +58,7 @@ public class Rover {
             case BACKWARDS:
                 step = -1;
         }
+        // In case of FORWARD/BACKWARDS action, check the facing direction to determine where to move.
         Axis axis = null;
         switch (facingDirection) {
             case NORTH:
@@ -52,9 +75,17 @@ public class Rover {
                 step *= -1;
                 axis = Axis.X;
         }
+        // compute the next position the rover should go
         nextPosition(action, step, axis);
     }
 
+    /**
+     * Computes the next position the rover should move to, considering edges and throwing exception if an obstacle is encountered.
+     * @param action it.zanifabio.rover.Action that is being performed.
+     * @param step Step to take on the given axis (+1 or -1).
+     * @param axis it.zanifabio.rover.Axis the rover should move onto (X or Y).
+     * @throws ObstacleEncounteredException Exception indicating an obstacle was encountered, its position and the status of the rover.
+     */
     private void nextPosition(Action action, final int step, final Axis axis) {
         Coordinate nextPosition;
         if (axis.equals(Axis.X)) {
@@ -82,6 +113,13 @@ public class Rover {
         }
     }
 
+    /**
+     * Method to input the rover a sequence of actions it should perform.
+     * In case of exceptions (obstacle encountered or illegal command) it moves until the sequence is valid and then aborts the sequence.
+     * @param sequence Character sequence representing the sequence of commands the rover should perform.
+     * @throws ObstacleEncounteredException Exception indicating an obstacle was encountered, its position and the status of the rover.
+     * @throws IllegalArgumentException Exception indicating an illegal command was given in the sequence.
+     */
     public void move(char[] sequence) {
         try {
             for (char command : sequence) {
@@ -98,11 +136,17 @@ public class Rover {
         }
     }
 
+    /**
+     * Method to input the rover a sequence of actions it should perform.
+     * In case of exceptions (obstacle encountered or illegal command) it moves until the sequence is valid and then aborts the sequence.
+     * @param sequence String representing the sequence of commands the rover should perform.
+     * @throws ObstacleEncounteredException Exception indicating an obstacle was encountered, its position and the status of the rover.
+     * @throws IllegalArgumentException Exception indicating an illegal command was given in the sequence.
+     */
     public void move(String sequence) {
         move(sequence.toCharArray());
     }
 
-    //todo: make helper classes in different package and main class to make the application runnable
 }
 
 enum Axis {X, Y}

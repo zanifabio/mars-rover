@@ -1,6 +1,12 @@
+package it.zanifabio.rover;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * Enum indicating a direction in the planet.
+ * As a convention, north indicates lower y axis values and west indicates lower x axis values.
+ */
 @Getter
 @AllArgsConstructor
 public enum Direction {
