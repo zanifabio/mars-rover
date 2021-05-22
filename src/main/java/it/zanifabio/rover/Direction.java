@@ -1,5 +1,8 @@
 package it.zanifabio.rover;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -16,6 +19,8 @@ public enum Direction {
     WEST("W");
 
     private final String shortName;
+
+    private static final Map<String, Direction> lookup = new HashMap<>();
 
     public static Direction right(Direction direction) {
         switch (direction) {
@@ -35,5 +40,17 @@ public enum Direction {
             case WEST: return SOUTH;
             default: throw new IllegalArgumentException("Illegal direction");
         }
+    }
+
+    /**
+     * Method to get the enum from the corresponding short string representation
+     * @param shortName Short name of the action (F,B,L,R)
+     * @return The corresponding it.zanifabio.rover.Action enum
+     */
+    public static Direction get(String shortName) {
+        if (lookup.get(shortName) == null) {
+            throw new IllegalArgumentException("Command not found");
+        }
+        return lookup.get(shortName);
     }
 }
