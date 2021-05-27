@@ -1,7 +1,8 @@
 plugins {
+    id 'io.franzbecker.gradle-lombok' version '4.0.0'
     id 'java'
-    id "io.freefair.lombok" version "6.0.0-m2"
 }
+import io.franzbecker.gradle.lombok.task.DelombokTask
 
 group 'it.zanifabio'
 version '1.0'
@@ -19,3 +20,17 @@ test {
     useJUnitPlatform()
 }
 
+task delombok(type: DelombokTask, dependsOn: compileJava) {
+    ext.outputDir = file("$buildDir/delombok")
+    outputs.dir(outputDir)
+    sourceSets.main.java.srcDirs.each {
+        inputs.dir(it)
+        args(it, "-d", outputDir)
+    }
+}
+
+javadoc {
+    dependsOn delombok
+    source = delombok.outputDir
+    failOnError = false
+}
