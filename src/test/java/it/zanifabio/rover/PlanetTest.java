@@ -12,11 +12,11 @@ public class PlanetTest {
 
     @Test
     public void testNewInstance() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> Planet.newInstance(-1, 2));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> Planet.newInstance(5, -20));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> Planet.newInstance(0, 0));
+        Assertions.assertThrows(Planet.PlanetPhysicsException.class, () -> Planet.newInstance(-1, 2));
+        Assertions.assertThrows(Planet.PlanetPhysicsException.class, () -> Planet.newInstance(5, -20));
+        Assertions.assertThrows(Planet.PlanetPhysicsException.class, () -> Planet.newInstance(0, 0));
 
-        Planet planet = Planet.newInstance(20,15);
+        Planet planet = Planet.newInstance(20, 15);
         Assertions.assertEquals(20, planet.getWidth());
         Assertions.assertEquals(15, planet.getHeight());
         Assertions.assertEquals(new HashSet<Coordinate>(), planet.getObstacles());
@@ -42,21 +42,21 @@ public class PlanetTest {
 
     @Test
     public void testPlaceAndClearObstacle() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> planet.placeObstacle(-1, 20));
-        planet.placeObstacle(7,12);
-        Assertions.assertTrue(planet.getObstacles().contains(Coordinate.of(7,12)));
-        planet.removeObstacle(7,12);
-        Assertions.assertFalse(planet.getObstacles().contains(Coordinate.of(7,12)));
+        Assertions.assertThrows(Planet.PlanetPhysicsException.class, () -> planet.placeObstacle(-1, 20));
+        planet.placeObstacle(7, 12);
+        Assertions.assertTrue(planet.getObstacles().contains(Coordinate.of(7, 12)));
+        planet.removeObstacle(7, 12);
+        Assertions.assertFalse(planet.getObstacles().contains(Coordinate.of(7, 12)));
     }
 
     @Test
     public void testPlaceAndClearMultipleObstacles() {
-        Coordinate c1 = Coordinate.of(2,3);
-        Coordinate c2 = Coordinate.of(4,7);
-        Coordinate c3 = Coordinate.of(5,11);
-        Coordinate c4 = Coordinate.of(18,25);
+        Coordinate c1 = Coordinate.of(2, 3);
+        Coordinate c2 = Coordinate.of(4, 7);
+        Coordinate c3 = Coordinate.of(5, 11);
+        Coordinate c4 = Coordinate.of(18, 25);
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> planet.placeObstacles(Set.of(c1, c2, c3, c4)));
+        Assertions.assertThrows(Planet.PlanetPhysicsException.class, () -> planet.placeObstacles(Set.of(c1, c2, c3, c4)));
 
         planet.placeObstacles(Set.of(c1, c2, c3));
         Assertions.assertTrue(planet.getObstacles().contains(c1));
@@ -70,9 +70,5 @@ public class PlanetTest {
 
         planet.removeObstacles();
         Assertions.assertFalse(planet.getObstacles().contains(c2));
-
     }
-
-
-
 }

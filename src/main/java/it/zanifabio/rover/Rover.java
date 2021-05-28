@@ -1,5 +1,6 @@
 package it.zanifabio.rover;
 
+import it.zanifabio.rover.exceptions.ObstacleEncounteredException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,24 +21,26 @@ public class Rover {
     /**
      * Static factory method to generate a new instance of a rover.
      * The rover must be placed inside the boundaries of the planet and not on any obstacle.
-     * @param planet it.zanifabio.rover.Planet where the rover operates.
-     * @param initialPosition Initial position of the rover on the planet. Must be inside the planet and not on obstacles.
+     *
+     * @param planet                 it.zanifabio.rover.Planet where the rover operates.
+     * @param initialPosition        Initial position of the rover on the planet. Must be inside the planet and not on obstacles.
      * @param initialFacingDirection Initial direction the rover is facing (N,E,S,W).
      * @return A new instance of the rover.
-     * @throws IllegalArgumentException If the rover initial position is outside the planet or on an obstacle.
+     * @throws it.zanifabio.rover.Planet.PlanetPhysicsException If the rover initial position is outside the planet or on an obstacle.
      */
     public static Rover newInstance(Planet planet, Coordinate initialPosition, Direction initialFacingDirection) {
         if (planet.isOutOfBounds(initialPosition.getX(), initialPosition.getY())) {
-            throw new IllegalArgumentException("It's a land rover. It must be placed on the planet.");
+            throw new Planet.PlanetPhysicsException("It's a land rover. It must be placed on the planet.");
         }
         if (planet.getObstacles().contains(initialPosition)) {
-            throw new IllegalArgumentException("Oops, you cannot place the rover on an obstacle.");
+            throw new Planet.PlanetPhysicsException("Oops, you cannot place the rover on an obstacle.");
         }
         return new Rover(planet, initialPosition, initialFacingDirection);
     }
 
     /**
      * Method to move the rover on the planet given an action to perform.
+     *
      * @param action The action the rover must perform. It has to be one of: FORWARD, BACKWARDS, LEFT, RIGHT
      * @throws ObstacleEncounteredException Exception indicating an obstacle was encountered, its position and the status of the rover.
      */
@@ -81,16 +84,17 @@ public class Rover {
 
     /**
      * Computes the next position the rover should move to, considering edges and throwing exception if an obstacle is encountered.
+     *
      * @param action it.zanifabio.rover.Action that is being performed.
-     * @param step Step to take on the given axis (+1 or -1).
-     * @param axis it.zanifabio.rover.Axis the rover should move onto (X or Y).
+     * @param step   Step to take on the given axis (+1 or -1).
+     * @param axis   it.zanifabio.rover.Axis the rover should move onto (X or Y).
      * @throws ObstacleEncounteredException Exception indicating an obstacle was encountered, its position and the status of the rover.
      */
     private void nextPosition(Action action, final int step, final Axis axis) {
         Coordinate nextPosition;
         if (axis.equals(Axis.X)) {
             if (currentPosition.getX() + step >= planet.getWidth()) {
-                nextPosition = Coordinate.of(0 , currentPosition.getY());
+                nextPosition = Coordinate.of(0, currentPosition.getY());
             } else if (currentPosition.getX() + step < 0) {
                 nextPosition = Coordinate.of(getPlanet().getWidth() - 1, currentPosition.getY());
             } else {
@@ -116,9 +120,10 @@ public class Rover {
     /**
      * Method to input the rover a sequence of actions it should perform.
      * In case of exceptions (obstacle encountered or illegal command) it moves until the sequence is valid and then aborts the sequence.
+     *
      * @param sequence Character sequence representing the sequence of commands the rover should perform.
      * @throws ObstacleEncounteredException Exception indicating an obstacle was encountered, its position and the status of the rover.
-     * @throws IllegalArgumentException Exception indicating an illegal command was given in the sequence.
+     * @throws IllegalArgumentException     Exception indicating an illegal command was given in the sequence.
      */
     public void move(char[] sequence) {
         try {
@@ -128,7 +133,7 @@ public class Rover {
             }
         } catch (ObstacleEncounteredException e) {
             String message = String.format("The rover encountered an obstacle at %s." +
-                    "\nIt stopped at %s, facing %s and cannot go %s. Command sequence aborted.",
+                            "\nIt stopped at %s, facing %s and cannot go %s. Command sequence aborted.",
                     e.getObstacle(), e.getRoverPosition(), e.getRoverFacingDirection(), e.getGivenCommand());
             throw new IllegalStateException(message, e);
         } catch (IllegalArgumentException e) {
@@ -139,12 +144,57 @@ public class Rover {
     /**
      * Method to input the rover a sequence of actions it should perform.
      * In case of exceptions (obstacle encountered or illegal command) it moves until the sequence is valid and then aborts the sequence.
+     *
      * @param sequence String representing the sequence of commands the rover should perform.
      * @throws ObstacleEncounteredException Exception indicating an obstacle was encountered, its position and the status of the rover.
-     * @throws IllegalArgumentException Exception indicating an illegal command was given in the sequence.
+     * @throws IllegalArgumentException     Exception indicating an illegal command was given in the sequence.
      */
     public void move(String sequence) {
         move(sequence.toCharArray());
+    }
+
+    /**
+     * Returns a string matrix containing a representation of the rover on the planet.
+     */
+    protected String[][] getStringMatrixRepresentation() {
+        String[][] map = planet.getStringMatrixRepresentation();
+        String roverRepresentation;
+        switch (facingDirection) {
+            case NORTH:
+                roverRepresentation = "\u22c0";
+                break;
+            case EAST:
+                roverRepresentation = ">";
+                break;
+            case SOUTH:
+                roverRepresentation = "v";
+                break;
+            case WEST:
+                roverRepresentation = "<";
+                break;
+            default:
+                roverRepresentation = "x";
+        }
+        map[currentPosition.getY()][currentPosition.getX()] = roverRepresentation;
+        return map;
+    }
+
+    /**
+     * Representation of the rover on the planet. Points are free spaces, squares are obstacles and the rover is
+     * represented as an arrow pointing in the direction it is facing.
+     *
+     * @return String representation of the planet.
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (String[] row : getStringMatrixRepresentation()) {
+            for (String col : row) {
+                sb.append(String.format("%3s", col));
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 
 }
