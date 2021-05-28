@@ -1,5 +1,9 @@
-package it.zanifabio.rover;
+package it.zanifabio.rover.exceptions;
 
+import it.zanifabio.rover.Action;
+import it.zanifabio.rover.Coordinate;
+import it.zanifabio.rover.Direction;
+import it.zanifabio.rover.Rover;
 import lombok.Getter;
 
 /**

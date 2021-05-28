@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import it.zanifabio.rover.exceptions.ObstacleEncounteredException;
+
 public class RoverTest {
     private Planet planet;
 
@@ -13,10 +15,10 @@ public class RoverTest {
     public void testNewInstance() {
         Planet planet = Planet.newInstance(20, 15);
         planet.placeObstacle(10, 10);
-        Exception exception = Assertions.assertThrows(IllegalArgumentException.class,
+        Exception exception = Assertions.assertThrows(Planet.PlanetPhysicsException.class,
                 () -> Rover.newInstance(planet, Coordinate.of(20, 20), Direction.NORTH));
         assert exception.getMessage().contains("must be placed on the planet");
-        exception = Assertions.assertThrows(IllegalArgumentException.class,
+        exception = Assertions.assertThrows(Planet.PlanetPhysicsException.class,
                 () -> Rover.newInstance(planet, Coordinate.of(10, 10), Direction.NORTH));
         assert exception.getMessage().contains("rover on an obstacle");
         Rover rover = Rover.newInstance(planet, Coordinate.of(15, 10), Direction.NORTH);
